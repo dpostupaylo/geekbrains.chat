@@ -4,8 +4,16 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TextArea?>
 
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.geometry.Insets?>
 <VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.example.geekbrainschatfx.HelloController">
-    <TextArea fx:id="mainTextArea" VBox.vgrow="ALWAYS" />
-    <Button text="Button #1" onAction="#btnOneClickAction" />
+    <VBox prefHeight="330">
+        <TextArea fx:id="conversationArea" prefWidth="280" VBox.vgrow="ALWAYS"/>
+        <HBox>
+            <TextField fx:id="messageInput" onKeyPressed="#msgAreaClickAction" prefWidth="275" VBox.vgrow="ALWAYS" />
+            <Button text="Send" onAction="#btnOneClickAction" />
+        </HBox>
+    </VBox>
 </VBox>
