@@ -21,10 +21,7 @@ public class Client {
             openConnection();
             launchReader();
             launchWriter();
-            Thread.currentThread().join();
         } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-        } catch (InterruptedException ex){
             System.out.println(ex.getMessage());
         }
     }
