@@ -10,6 +10,8 @@ module com.example.geekbrainschatfx {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
 
-    opens com.example.geekbrainschatfx to javafx.fxml;
-    exports com.example.geekbrainschatfx;
+    exports com.gb.chat.fx.client;
+    opens com.gb.chat.fx.client to javafx.fxml;
+    exports com.gb.chat.fx.server;
+    opens com.gb.chat.fx.server to javafx.fxml;
 }
