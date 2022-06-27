@@ -12,15 +12,20 @@ public class Client {
 
     private ClientController clientController;
 
-    public Client(ClientController controller){
+    public Client(ClientController controller) {
         this.clientController = controller;
-    }
-
-    public void openConnection(String login, String password) {
         try {
             socket = new Socket("localhost", 8189);
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
+            out.writeUTF("/new");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void openConnection(String login, String password) {
+        try {
             out.writeUTF("/auth " + login + " " + password);
             Thread t = new Thread(new Runnable() {
                 @Override

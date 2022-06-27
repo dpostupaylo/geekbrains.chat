@@ -31,8 +31,9 @@ public class Server {
             while (true) {
                 System.out.println("Server is waiting for clients");
                 Socket socket = server.accept();
-                System.out.println("Client connected");
                 new ClientHandler(this, socket);
+                System.out.println("Client connected");
+
             }
         } catch (IOException e) {
             System.out.println("Error during server work");
