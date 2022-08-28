@@ -9,6 +9,7 @@ module com.example.geekbrainschatfx {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
+    requires java.sql;
 
     exports com.gb.chat.fx.client;
     opens com.gb.chat.fx.client to javafx.fxml;

@@ -1,5 +1,7 @@
 package com.gb.chat.fx.server;
 
+import com.gb.chat.fx.server.db.User;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -12,10 +14,9 @@ public class ClientHandler {
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
-    private String name;
-
+    private User user;
     public String getName() {
-        return name;
+        return user.getNick();
     }
 
     public ClientHandler(Server myServer, Socket socket) {
@@ -24,7 +25,6 @@ public class ClientHandler {
             this.socket = socket;
             this.in = new DataInputStream(socket.getInputStream());
             this.out = new DataOutputStream(socket.getOutputStream());
-            this.name = "";
             new Thread(() -> {
                 try {
                     authentication();
@@ -45,12 +45,11 @@ public class ClientHandler {
             String str = in.readUTF();
             if (str.startsWith("/auth")) {
                 String[] parts = str.split("\\s");
-                String nick = myServer.getAuthService().getNickByLoginPass(parts[1], parts[2]);
-                if (nick != null) {
-                    if (!myServer.isNickBusy(nick)) {
-                        sendMsg("/authok " + nick);
-                        name = nick;
-                        myServer.broadcastMsg(name + " entered to chat");
+                user = myServer.getAuthService().getUserByLoginPass(parts[1], parts[2]);
+                if (user != null) {
+                    if (!myServer.isNickBusy(user.getNick())) {
+                        sendMsg("/authok " + user.getNick());
+                        myServer.broadcastMsg(user.getNick() + " entered to chat");
                         myServer.subscribe(this);
                         return;
                     } else {
@@ -66,7 +65,7 @@ public class ClientHandler {
     public void readMessages() throws IOException {
         while (true) {
             String strFromClient = in.readUTF();
-            System.out.println("from " + name + ": " + strFromClient);
+            System.out.println("from " + user.getNick() + ": " + strFromClient);
             if (strFromClient.equals("/end")) {
                 return;
             }
@@ -74,9 +73,15 @@ public class ClientHandler {
                 String[] messages = strFromClient.split("\\s");
                 String nick = messages[1];
                 String message = Arrays.stream(Arrays.copyOfRange(messages, 2, messages.length)).collect(Collectors.joining(" "));
-                myServer.sendToSomebody(name, nick, String.format("%s to %s : %s",name, nick, message));
+                myServer.sendToSomebody(user.getNick(), nick, String.format("%s to %s : %s",user.getNick(), nick, message));
+            } else if (strFromClient.startsWith("/nickamend")) {
+                String[] messages = strFromClient.split("\\s");
+                String nick = messages[1];
+                myServer.getAuthService().updateUserNick(user, nick);
+                myServer.broadcastMsg(user.getNick() + ": nick amend " + user.getNick() + "->" + nick);
+                this.user = myServer.getAuthService().getUserByLoginPass(user.getLogin(), user.getPass());
             } else {
-                myServer.broadcastMsg(name + ": " + strFromClient);
+                myServer.broadcastMsg(user.getNick() + ": " + strFromClient);
             }
         }
     }
@@ -91,7 +96,7 @@ public class ClientHandler {
 
     public void closeConnection() {
         myServer.unsubscribe(this);
-        myServer.broadcastMsg(name + " out of chat");
+        myServer.broadcastMsg(user.getNick() + " out of chat");
         try {
             in.close();
         } catch (IOException e) {

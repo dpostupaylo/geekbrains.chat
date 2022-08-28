@@ -18,9 +18,10 @@ public class Client {
 
     public void openConnection(String login, String password) {
         try {
-            socket = new Socket("localhost", 8189);
+            socket = new Socket("0.0.0.0", 8181);
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
+
             out.writeUTF("/auth " + login + " " + password);
             Thread t = new Thread(new Runnable() {
                 @Override

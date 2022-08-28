@@ -24,10 +24,24 @@ public class ClientController {
     private TextArea conversationArea;
     @FXML
     private TextField messageInput;
+    @FXML
+    private TextField nickInput;
+
 
     @FXML
-    public void btnOneClickAction(ActionEvent actionEvent) {
+    public void sendBtnClickAction(ActionEvent actionEvent) {
         sendMessage();
+    }
+
+    @FXML
+    public void changeNickBtnClickAction(ActionEvent actionEvent) {
+        changeNick();
+    }
+
+    @FXML
+    public void nickAreaClickAction(KeyEvent keyEvent){
+        if (keyEvent.getCode() == KeyCode.ENTER)
+            changeNick();
     }
 
     @FXML
@@ -43,6 +57,11 @@ public class ClientController {
     private void sendMessage(){
         client.sendMessage(messageInput.getText());
         messageInput.clear();
+    }
+
+    private void changeNick(){
+        client.sendMessage("/nickamend " + nickInput.getText());
+        nickInput.clear();
     }
 
     public void addMessageInMessageArea(String message){
