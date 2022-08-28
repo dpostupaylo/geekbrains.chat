@@ -1,22 +1,14 @@
 package com.gb.chat.fx.auth;
 
+import com.gb.chat.fx.server.db.ChatDataBase;
+import com.gb.chat.fx.server.db.User;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class BaseAuthService implements AuthService {
-    private class Entry {
-        private String login;
-        private String pass;
-        private String nick;
-
-        public Entry(String login, String pass, String nick) {
-            this.login = login;
-            this.pass = pass;
-            this.nick = nick;
-        }
-    }
-
-    private List<Entry> entries;
+    private List<User> entries;
+    private ChatDataBase chatDataBase;
 
     @Override
     public void start() {
@@ -29,16 +21,22 @@ public class BaseAuthService implements AuthService {
     }
 
     public BaseAuthService() {
+        chatDataBase = new ChatDataBase();
         entries = new ArrayList<>();
-        entries.add(new Entry("login1", "pass1", "nick1"));
-        entries.add(new Entry("login2", "pass2", "nick2"));
-        entries.add(new Entry("login3", "pass3", "nick3"));
+        entries = chatDataBase.getUsersList();
     }
 
     @Override
-    public String getNickByLoginPass(String login, String pass) {
-        for (Entry o : entries) {
-            if (o.login.equals(login) && o.pass.equals(pass)) return o.nick;
+    public void updateUserNick(User user, String nick){
+        entries.remove(user);
+        chatDataBase.modifyUserNick(user, nick);
+        entries.add(new User(user.getId(), user.getLogin(), user.getPass(), nick));
+    }
+
+    @Override
+    public User getUserByLoginPass(String login, String pass) {
+        for (User o : entries) {
+            if (o.getLogin().equals(login) && o.getPass().equals(pass)) return o;
         }
         return null;
     }

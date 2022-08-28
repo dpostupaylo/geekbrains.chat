@@ -22,7 +22,11 @@
             <TextArea fx:id="conversationArea" prefWidth="280" VBox.vgrow="ALWAYS"/>
             <HBox>
                 <TextField fx:id="messageInput" onKeyPressed="#msgAreaClickAction" prefWidth="275" VBox.vgrow="ALWAYS" />
-                <Button text="Send" onAction="#btnOneClickAction" />
+                <Button text="Send" onAction="#sendBtnClickAction" />
+            </HBox>
+            <HBox>
+                <TextField fx:id="nickInput" onKeyPressed="#nickAreaClickAction" prefWidth="275" VBox.vgrow="ALWAYS" />
+                <Button text="Change my nick" onAction="#changeNickBtnClickAction" />
             </HBox>
         </VBox>
     </VBox>

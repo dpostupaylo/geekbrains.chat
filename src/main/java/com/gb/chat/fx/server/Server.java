@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Server {
-    private final int PORT = 8189;
+    private final int PORT = 8181;
 
     private List<ClientHandler> clients;
     private AuthService authService;
