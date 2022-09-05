@@ -9,7 +9,7 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class ClientHandler {
+public class ClientHandler implements Runnable {
     private Server myServer;
     private Socket socket;
     private DataInputStream in;
@@ -25,18 +25,21 @@ public class ClientHandler {
             this.socket = socket;
             this.in = new DataInputStream(socket.getInputStream());
             this.out = new DataOutputStream(socket.getOutputStream());
-            new Thread(() -> {
-                try {
-                    authentication();
-                    readMessages();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    closeConnection();
-                }
-            }).start();
+
         } catch (IOException e) {
             throw new RuntimeException("Error during ClientHandler creating");
+        }
+    }
+
+    @Override
+    public void run() {
+        try {
+            authentication();
+            readMessages();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection();
         }
     }
 
