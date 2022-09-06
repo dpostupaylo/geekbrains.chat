@@ -8,9 +8,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Server {
     private final int PORT = 8181;
+
+    private ExecutorService handlers = Executors.newCachedThreadPool();
 
     private List<ClientHandler> clients;
     private AuthService authService;
@@ -68,6 +72,7 @@ public class Server {
     }
 
     public synchronized void subscribe(ClientHandler o) {
+        handlers.submit(o);
         clients.add(o);
     }
 }
