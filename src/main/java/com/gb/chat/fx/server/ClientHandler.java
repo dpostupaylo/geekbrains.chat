@@ -8,8 +8,13 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import org.apache.log4j.Logger;
+
 
 public class ClientHandler implements Runnable {
+
+    private Logger logger = Logger.getLogger(ClientHandler.class);
+
     private Server myServer;
     private Socket socket;
     private DataInputStream in;
@@ -21,11 +26,11 @@ public class ClientHandler implements Runnable {
 
     public ClientHandler(Server myServer, Socket socket) {
         try {
+            logger.info("initializing new client handler");
             this.myServer = myServer;
             this.socket = socket;
             this.in = new DataInputStream(socket.getInputStream());
             this.out = new DataOutputStream(socket.getOutputStream());
-
         } catch (IOException e) {
             throw new RuntimeException("Error during ClientHandler creating");
         }
@@ -46,6 +51,7 @@ public class ClientHandler implements Runnable {
     public void authentication() throws IOException {
         while (true) {
             String str = in.readUTF();
+            logger.info(String.format("New message %s", str));
             if (str.startsWith("/auth")) {
                 String[] parts = str.split("\\s");
                 user = myServer.getAuthService().getUserByLoginPass(parts[1], parts[2]);
@@ -68,7 +74,7 @@ public class ClientHandler implements Runnable {
     public void readMessages() throws IOException {
         while (true) {
             String strFromClient = in.readUTF();
-            System.out.println("from " + user.getNick() + ": " + strFromClient);
+            logger.info(String.format("from %s : %s", user.getNick(), strFromClient));
             if (strFromClient.equals("/end")) {
                 return;
             }
@@ -100,6 +106,7 @@ public class ClientHandler implements Runnable {
     public void closeConnection() {
         myServer.unsubscribe(this);
         myServer.broadcastMsg(user.getNick() + " out of chat");
+        logger.info(user.getNick() + " out of chat");
         try {
             in.close();
         } catch (IOException e) {

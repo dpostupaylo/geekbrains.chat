@@ -10,8 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.apache.log4j.Logger;
+
 
 public class Server {
+    private Logger logger = Logger.getLogger(Server.class);
+
     private final int PORT = 8181;
 
     private ExecutorService handlers = Executors.newCachedThreadPool();
@@ -33,13 +37,13 @@ public class Server {
             authService.start();
             clients = new ArrayList<>();
             while (true) {
-                System.out.println("Server is waiting for clients");
+                logger.info("Server is waiting for clients");
                 Socket socket = server.accept();
-                System.out.println("Client connected");
+                logger.info("Client connected");
                 new ClientHandler(this, socket);
             }
         } catch (IOException e) {
-            System.out.println("Error during server work");
+            logger.error("Error during server work");
         } finally {
             if (authService != null) {
                 authService.stop();
@@ -57,7 +61,7 @@ public class Server {
     }
 
     public void sendToSomebody(String nameFrom, String nameTo, String message){
-        System.out.println("From " +nameFrom+ " to " + nameTo + " " + message);
+        logger.info(String.format("From %s to %s - %s", nameFrom, nameTo, message));
         clients.stream().filter(it -> it.getName().equals(nameTo) || it.getName().equals(nameFrom)).forEach(it -> it.sendMsg(message));
     }
 
