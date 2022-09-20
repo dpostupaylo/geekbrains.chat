@@ -26,9 +26,9 @@ public class TestLauncher {
 
         sortedTests.forEach(method -> {
             try {
-                beforeMethod.invoke(object.newInstance());
-                method.invoke(object.newInstance());
-                afterMethod.invoke(object.newInstance());
+                beforeMethod.invoke(object.getDeclaredConstructor().newInstance());
+                method.invoke(object.getDeclaredConstructor().newInstance());
+                afterMethod.invoke(object.getDeclaredConstructor().newInstance());
             } catch (Exception e) {
                 e.printStackTrace();
             }
